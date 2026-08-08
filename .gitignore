@@ -1,0 +1,12 @@
+bin/
+
+obj/
+
+# Out-of-tree build and install trees for the vendored libraries; the sources
+# themselves are submodules under libs/.
+libs/build/
+libs/install/
+
+roms/
+
+*.sav

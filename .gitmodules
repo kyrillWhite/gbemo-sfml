@@ -1,0 +1,6 @@
+[submodule "libs/gbemo-core"]
+	path = libs/gbemo-core
+	url = https://github.com/kyrillWhite/gbemo-core.git
+[submodule "libs/SFML"]
+	path = libs/SFML
+	url = https://github.com/SFML/SFML.git

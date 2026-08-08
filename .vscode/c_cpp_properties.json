@@ -1,0 +1,19 @@
+{
+  "configurations": [
+    {
+      "name": "Win32",
+      "includePath": [
+        "${workspaceFolder}/src",
+        "${workspaceFolder}/libs/gbemo-core/src",
+        "${workspaceFolder}/libs/SFML/include"
+      ],
+      "defines": ["_DEBUG", "UNICODE", "_UNICODE", "SFML_STATIC"],
+      "windowsSdkVersion": "10.0.26100.0",
+      "compilerPath": "C:/msys64/mingw64/bin/g++.exe",
+      "cStandard": "c17",
+      "cppStandard": "c++20",
+      "intelliSenseMode": "windows-gcc-x64"
+    }
+  ],
+  "version": 4
+}

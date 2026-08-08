@@ -175,9 +175,9 @@ private:
     std::mutex m_mutex;
 };
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-    const char* romPath = argc > 1 ? argv[1] : "roms/rom.gb";
+    const char *romPath = argc > 1 ? argv[1] : "roms/rom.gb";
 
     std::cout << "Starting emulator...\n";
     auto emu = new Emu(true);

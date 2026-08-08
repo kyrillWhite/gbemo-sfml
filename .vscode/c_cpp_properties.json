@@ -4,7 +4,7 @@
       "name": "Win32",
       "includePath": [
         "${workspaceFolder}/src",
-        "${workspaceFolder}/libs/gbemo-core/src",
+        "${workspaceFolder}/libs/gbemo-core/include",
         "${workspaceFolder}/libs/SFML/include"
       ],
       "defines": ["_DEBUG", "UNICODE", "_UNICODE", "SFML_STATIC"],

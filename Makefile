@@ -108,7 +108,7 @@ CORE_LIB_RELEASE := $(CORE_DIR)/bin/release/$(ARCH)/libgbemo.a
 # --- this project ------------------------------------------------------------
 
 CXXFLAGS_BASE := -std=c++20 -DSFML_STATIC -Isrc -I$(CORE_INCLUDE_DIR) \
-	-I$(SFML_INCLUDE_DIR) $(ARCH_FLAGS)
+	-I$(SFML_INCLUDE_DIR) $(ARCH_FLAGS) -MMD -MP
 # Pull in libstdc++/libgcc/winpthread too, so the executable needs nothing from
 # the MinGW installation at runtime.
 LDFLAGS := $(ARCH_FLAGS) -static
@@ -125,10 +125,12 @@ BIN_DIR_DEBUG = bin/debug/$(ARCH)
 BIN_DIR_RELEASE = bin/release/$(ARCH)
 MY_OBJ_DEBUG = $(patsubst src/%.cpp,$(OBJ_DIR_DEBUG)/%.o,$(MY_SRC))
 MY_OBJ_RELEASE = $(patsubst src/%.cpp,$(OBJ_DIR_RELEASE)/%.o,$(MY_SRC))
+MY_DEP_DEBUG = $(MY_OBJ_DEBUG:.o=.d)
+MY_DEP_RELEASE = $(MY_OBJ_RELEASE:.o=.d)
 OUT_DEBUG = $(BIN_DIR_DEBUG)/emu$(EXE)
 OUT_RELEASE = $(BIN_DIR_RELEASE)/emu$(EXE)
 
-.PHONY: all debug release clean clean-libs clean-all run submodules \
+.PHONY: all debug release clean clean-core clean-libs clean-all run submodules \
         core-debug core-release sfml-debug sfml-release \
         copy-dlls copy-dlls-debug copy-assets copy-assets-debug
 
@@ -164,10 +166,10 @@ $(SFML_STAMP_RELEASE):
 		-DCMAKE_BUILD_TYPE=Release
 	$(CMAKE) --build $(SFML_BUILD_DIR_RELEASE) --parallel
 
-$(OUT_DEBUG): $(MY_OBJ_DEBUG) | $(BIN_DIR_DEBUG)
+$(OUT_DEBUG): $(MY_OBJ_DEBUG) $(CORE_LIB_DEBUG) | $(BIN_DIR_DEBUG)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(MY_OBJ_DEBUG) -o $(OUT_DEBUG) $(CORE_LIB_DEBUG) $(SFML_LIBS_DEBUG) $(FLAGS)
 
-$(OUT_RELEASE): $(MY_OBJ_RELEASE) | $(BIN_DIR_RELEASE)
+$(OUT_RELEASE): $(MY_OBJ_RELEASE) $(CORE_LIB_RELEASE) | $(BIN_DIR_RELEASE)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(MY_OBJ_RELEASE) -o $(OUT_RELEASE) $(CORE_LIB_RELEASE) $(SFML_LIBS_RELEASE) $(FLAGS)
 
 $(OBJ_DIR_DEBUG)/%.o: src/%.cpp | $(OBJ_DIR_DEBUG)
@@ -175,6 +177,8 @@ $(OBJ_DIR_DEBUG)/%.o: src/%.cpp | $(OBJ_DIR_DEBUG)
 
 $(OBJ_DIR_RELEASE)/%.o: src/%.cpp | $(OBJ_DIR_RELEASE)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+-include $(MY_DEP_DEBUG) $(MY_DEP_RELEASE)
 
 $(OBJ_DIR_DEBUG):
 	@$(MKDIR) $(OBJ_DIR_DEBUG)
@@ -195,12 +199,14 @@ clean:
 	@$(RM) obj
 	@$(RM) bin
 
+clean-core:
+	@$(MAKE) -C $(CORE_DIR) clean
+
 # SFML takes minutes to build, so it is not part of "clean".
 clean-libs:
 	@$(RM) libs/build
 
-clean-all: clean clean-libs
-	@$(MAKE) -C $(CORE_DIR) clean
+clean-all: clean clean-core clean-libs
 
 # OpenAL stays a DLL even in a static build: SFML loads it as a separate
 # runtime dependency.

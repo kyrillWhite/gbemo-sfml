@@ -100,7 +100,8 @@ SFML_CMAKE_FLAGS := -G "MinGW Makefiles" \
 
 # --- gbemo-core, built from the submodule ------------------------------------
 
-CORE_INCLUDE_DIR := $(CORE_DIR)/src
+# The core's public headers only — src/ holds the internal, per-subsystem ones.
+CORE_INCLUDE_DIR := $(CORE_DIR)/include
 CORE_LIB_DEBUG := $(CORE_DIR)/bin/debug/$(ARCH)/libgbemo.a
 CORE_LIB_RELEASE := $(CORE_DIR)/bin/release/$(ARCH)/libgbemo.a
 
